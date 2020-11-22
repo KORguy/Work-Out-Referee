@@ -8,22 +8,59 @@ import { Individual } from "../Components/Individual";
 import { Popup } from "../Components/Popup";
 import { Play } from "../Components/Play";
 
-// 사진 링크 추가 자리
 import image1 from "../Image/temp.jpg";
 import image2 from "../Image/temp2.jpg";
+
+import yoga_image from "../Image/Yoga.jpeg";
+import chest_image from "../Image/Chest.jpg";
+import shoulder_back_image from "../Image/ShoulderandBack.jpg";
+import arms_image from "../Image/Arms.jpg";
+import abs_image from "../Image/Abs.jpeg";
+import legs_image from "../Image/Legs.jpeg";
+import aerobics_image from "../Image/Aerobics.jpeg";
+
+import arm_curl_image from "../Image/Arm Curl.jpeg";
+import camel_pose_image from "../Image/CamelPose.jpg";
+import core_stabilizer_image from "../Image/CoreStabilizer.jpg";
+import jumping_jacks_image from "../Image/JumpingJacks.jpg";
+import lunge_image from "../Image/Lunge.jpg";
+import side_lateral_raise_image from "../Image/Side Lateral Raise.jpeg";
+import side_lunge_image from "../Image/Side Lunge.jpeg";
+import squat_image from "../Image/Squat.jpeg";
+import tree_pose_image from "../Image/TreePose.jpg";
+import burpee_image from "../Image/Burpee.jpeg";
+import push_up_image from "../Image/PushUp.jpg";
+import standing_oblique_band_image from "../Image/StandingObliqueBand.jpg";
 
 import workout from "../Components/workout";
 import workoutplan from "../Components/workoutplan";
 
-// 운동계획들 리스트. *이름은 Play.js에 있는 이름과 같아야함
-var premade1 = [
-  new workout("Burpy", 15, 3),
-  new workout("Side Lateral Raise", 15, 3),
+var yoga = [new workout("Camel Pose", 15, 3), new workout("Tree Pose", 15, 3)];
+var chest = [new workout("Push Up", 15, 3)];
+var shoulder_back = [new workout("Side Lateral Raise", 15, 3)];
+var arms = [new workout("Arm Curl", 15, 3)];
+var abs = [
+  new workout("Core Stabilizer", 15, 3),
+  new workout("Standing Oblique Band", 15, 3),
+];
+var legs = [
+  new workout("Squat", 15, 3),
+  new workout("Lunge", 15, 3),
+  new workout("Side Lunge", 15, 3),
+];
+var aerobics = [
+  new workout("Burpee", 15, 3),
   new workout("Jumping Jacks", 15, 3),
 ];
 
 // 운동계획 이름 + 운동들 리스트 자료형
-var workoutplan1 = new workoutplan("1번 운동계획", premade1);
+var plan_yoga = new workoutplan("요가", yoga);
+var plan_ches = new workoutplan("근력 (가슴)", chest);
+var plan_shba = new workoutplan("근력 (어깨/등)", shoulder_back);
+var plan_arms = new workoutplan("근력 (팔)", arms);
+var plan_abdm = new workoutplan("근력 (복근)", abs);
+var plan_legs = new workoutplan("근력 (하체)", legs);
+var plan_aero = new workoutplan("유산소", aerobics);
 
 export const Main = ({ user, handleLogout }) => {
   const [initial, setInitial] = useState(true);
@@ -106,195 +143,217 @@ export const Main = ({ user, handleLogout }) => {
           )}
           {planned && (
             <div className="plan-container">
-              {/* 여기서부터 */}
               <div
                 onClick={() => {
                   setPlanned(false);
                   setWorkout(true);
-                  setWorkOutPlan(workoutplan1); // 위에서 새로 만든 workoutplan 값으로 변경
+                  setWorkOutPlan(plan_yoga);
                 }}
               >
-                {/* 사진 교체 및 플랜을 위에 만든 workoutplan 자료형으로 교체 */}
-                <PlanCard id="id1" image={image1} plan={workoutplan1} />
-              </div>
-              {/* 여기까지가 버튼 하나 아래는 위 코드 반복. 만든 운동계획만큼 하면 됌*/}
-              <div
-                onClick={() => {
-                  setPlanned(false);
-                  setWorkout(true);
-                  setWorkOutPlan(workoutplan1);
-                }}
-              >
-                <PlanCard id="id2" image={image2} plan={workoutplan1} />
+                <PlanCard id="id1" image={yoga_image} plan={plan_yoga} />
               </div>
               <div
                 onClick={() => {
                   setPlanned(false);
                   setWorkout(true);
-                  setWorkOutPlan(workoutplan1);
+                  setWorkOutPlan(plan_ches);
                 }}
               >
-                <PlanCard id="id3" image={image1} plan={workoutplan1} />
+                <PlanCard id="id2" image={chest_image} plan={plan_ches} />
               </div>
               <div
                 onClick={() => {
                   setPlanned(false);
                   setWorkout(true);
-                  setWorkOutPlan(workoutplan1);
+                  setWorkOutPlan(plan_shba);
                 }}
               >
-                <PlanCard id="id4" image={image2} plan={workoutplan1} />
+                <PlanCard
+                  id="id3"
+                  image={shoulder_back_image}
+                  plan={plan_shba}
+                />
+              </div>
+              <div
+                onClick={() => {
+                  setPlanned(false);
+                  setWorkout(true);
+                  setWorkOutPlan(plan_arms);
+                }}
+              >
+                <PlanCard id="id4" image={arms_image} plan={plan_arms} />
+              </div>
+              <div
+                onClick={() => {
+                  setPlanned(false);
+                  setWorkout(true);
+                  setWorkOutPlan(plan_abdm);
+                }}
+              >
+                <PlanCard id="id5" image={abs_image} plan={plan_abdm} />
+              </div>
+              <div
+                onClick={() => {
+                  setPlanned(false);
+                  setWorkout(true);
+                  setWorkOutPlan(plan_legs);
+                }}
+              >
+                <PlanCard id="id6" image={legs_image} plan={plan_legs} />
+              </div>
+              <div
+                onClick={() => {
+                  setPlanned(false);
+                  setWorkout(true);
+                  setWorkOutPlan(plan_aero);
+                }}
+              >
+                <PlanCard id="id7" image={aerobics_image} plan={plan_aero} />
               </div>
             </div>
           )}
           {individual && (
             <div className="scrollable-container">
-              {/* 여기서 부터 */}
-              <h1 className="group-name">요가: </h1> {/* 운동 카테고리 이름 */}
+              <h1 className="group-name">요가: </h1>
               <div className="individual-container">
                 <div style={{ display: "flex" }}>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
-                      {
-                        /* 운동 이름 play.js에서 입력할 값이랑 같아야함 */
-                      }
+                      setIndividualName("Camel Pose");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />{" "}
-                    {/* 운동 이름 + 사진교체 */}
+                    <Individual name="Camel Pose" image={camel_pose_image} />
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
+                      setIndividualName("Tree Pose");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual name="Tree Pose" image={tree_pose_image} />
                   </div>
                 </div>
               </div>
-              {/* 여기까지가 한 카테고리*/}
-              <h1 className="group-name">요가: </h1> {/* 운동 카테고리 이름 */}
+              <h1 className="group-name">근력 (가슴): </h1>
               <div className="individual-container">
                 <div style={{ display: "flex" }}>
                   <div
                     onClick={() => {
                       setIndividualName("Push Up");
-                      {
-                        /* 운동 이름 play.js에서 입력할 값이랑 같아야함 */
-                      }
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />{" "}
-                    {/* 운동 이름 + 사진교체 */}
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
-                  </div>
-                  <div
-                    onClick={() => {
-                      setIndividualName("Push Up");
-                      setTogglePopup(true);
-                    }}
-                  >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual name="Push Up" image={push_up_image} />
                   </div>
                 </div>
               </div>
-              <h1 className="group-name">요가: </h1> {/* 운동 카테고리 이름 */}
+              <h1 className="group-name">근력 (어깨/등): </h1>
               <div className="individual-container">
                 <div style={{ display: "flex" }}>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
-                      {
-                        /* 운동 이름 play.js에서 입력할 값이랑 같아야함 */
-                      }
+                      setIndividualName("Side Lateral Raise");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />{" "}
-                    {/* 운동 이름 + 사진교체 */}
+                    <Individual
+                      name="Side Lateral Raise"
+                      image={side_lateral_raise_image}
+                    />{" "}
+                  </div>
+                </div>
+              </div>
+              <h1 className="group-name">근력 (팔): </h1>
+              <div className="individual-container">
+                <div style={{ display: "flex" }}>
+                  <div
+                    onClick={() => {
+                      setIndividualName("Arm Curl");
+                      setTogglePopup(true);
+                    }}
+                  >
+                    <Individual name="Arm Curl" image={arm_curl_image} />{" "}
+                  </div>
+                </div>
+              </div>
+              <h1 className="group-name">근력 (복근): </h1>
+              <div className="individual-container">
+                <div style={{ display: "flex" }}>
+                  <div
+                    onClick={() => {
+                      setIndividualName("Core Stabilizer");
+                      setTogglePopup(true);
+                    }}
+                  >
+                    <Individual
+                      name="Core Stabilizer"
+                      image={core_stabilizer_image}
+                    />{" "}
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
+                      setIndividualName("Standing Oblique Band");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual
+                      name="Standing Oblique Band"
+                      image={standing_oblique_band_image}
+                    />{" "}
+                  </div>
+                </div>
+              </div>
+              <h1 className="group-name">근력 (하체): </h1>
+              <div className="individual-container">
+                <div style={{ display: "flex" }}>
+                  <div
+                    onClick={() => {
+                      setIndividualName("Squat");
+                      setTogglePopup(true);
+                    }}
+                  >
+                    <Individual name="Squat" image={squat_image} />{" "}
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
+                      setIndividualName("Lunge");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual name="Lunge" image={lunge_image} />{" "}
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
+                      setIndividualName("Side Lunge");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual name="Side Lunge" image={side_lunge_image} />{" "}
+                  </div>
+                </div>
+              </div>
+              <h1 className="group-name">유산소: </h1>
+              <div className="individual-container">
+                <div style={{ display: "flex" }}>
+                  <div
+                    onClick={() => {
+                      setIndividualName("Burpee");
+                      setTogglePopup(true);
+                    }}
+                  >
+                    <Individual name="Burpee" image={burpee_image} />{" "}
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Push Up");
+                      setIndividualName("Jumping Jacks");
                       setTogglePopup(true);
                     }}
                   >
-                    <Individual name="Side Lateral Raise" image={image1} />
+                    <Individual
+                      name="Jumping Jacks"
+                      image={jumping_jacks_image}
+                    />{" "}
                   </div>
                 </div>
               </div>

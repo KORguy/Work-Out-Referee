@@ -1,6 +1,8 @@
 import React from "react";
 
 export const Individual = ({ name, image }) => {
+  // window.fitText(document.getElementById("test"));
+
   return (
     <div
       className="individual-card"
@@ -11,9 +13,12 @@ export const Individual = ({ name, image }) => {
           backgroundColor: "rgba(0,0,0,0.6)",
           width: "200px",
           height: "200px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <h1>{name}</h1>
+        <h1 id="test">{name}</h1>
       </div>
     </div>
   );
