@@ -279,3 +279,34 @@
 .process > p {
   color: transparent;
 }
+
+.skip-button {
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  transition: 0.4s;
+  font-weight: bolder;
+}
+
+.skip-button:hover {
+  background-color: gray;
+}
+
+.skip-button:focus {
+  outline: none;
+}
+
+.loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.308);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 70px;
+}

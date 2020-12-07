@@ -60,6 +60,8 @@ export const Login = () => {
 
   const handleLogout = () => {
     fire.auth().signOut();
+    localStorage.clear();
+    setUser();
   };
 
   const authListener = () => {
@@ -67,6 +69,8 @@ export const Login = () => {
       if (user) {
         clearInputs();
         setUser(user);
+        localStorage.clear();
+        localStorage.setItem("user", JSON.stringify(user));
       } else {
         setUser("");
       }
@@ -74,7 +78,13 @@ export const Login = () => {
   };
 
   useEffect(() => {
-    authListener();
+    const log = localStorage.getItem("user");
+    if (log) {
+      setUser(JSON.parse(log));
+      console.log(user);
+    } else {
+      authListener();
+    }
   }, []);
 
   return (

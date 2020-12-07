@@ -1,17 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-confetti";
+import { Loading } from "./Loading";
+import { Transition } from "./Transition";
 import * as tmPose from "@teachablemachine/pose";
 import "../App.css";
 
 import mdl from "./mdl";
-
+import workoutplan from "./workoutplan";
 var modelDict = {};
 
 // 요가
 modelDict["Camel Pose"] = new mdl(
-  "https://teachablemachine.withgoogle.com/models/aqs_uffmU/",
+  "https://teachablemachine.withgoogle.com/models/FjIBLMmL0/",
   null
 );
-modelDict["Tree Pose"] = new mdl("", null);
+modelDict["Tree Pose"] = new mdl(
+  "https://teachablemachine.withgoogle.com/models/KYxbd5TqN/",
+  null
+);
 // 근력 (가슴)
 modelDict["Push Up"] = new mdl(
   "https://teachablemachine.withgoogle.com/models/azqsp2tS5/",
@@ -35,11 +42,11 @@ modelDict["Standing Oblique Band"] = new mdl(
 );
 // 근력 (하체)
 modelDict["Squat"] = new mdl(
-  "https://teachablemachine.withgoogle.com/models/TSnyG3NGU/",
+  "https://teachablemachine.withgoogle.com/models/LXqPPixvv/",
   null
 );
 modelDict["Lunge"] = new mdl(
-  "//teachablemachine.withgoogle.com/models/b_pil1Rp-/",
+  "https://teachablemachine.withgoogle.com/models/b_pil1Rp-/",
   null
 );
 modelDict["Side Lunge"] = new mdl(
@@ -57,84 +64,207 @@ modelDict["Jumping Jacks"] = new mdl(
 );
 
 export const Play = ({ workOutPlan }) => {
-  console.log(workOutPlan);
-  // let model, webcam, ctx, maxPredictions;
+  let obj = JSON.parse(JSON.stringify(workOutPlan));
+  const [workout, setWorkOut] = useState(new workoutplan(obj.name, obj.list));
+  const [current, setCurrent] = useState(workout.list[workOutPlan.pointer]);
+  const [next, setNext] = useState(workout.next());
+  const { width, height } = useWindowSize();
+  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [webcamLoaded, setWebcamLoaded] = useState(false);
+  const [currentModel, setCurrentModel] = useState();
+  const [transition, setTransition] = useState(false);
+  const [webcam, setWebcam] = useState(new tmPose.Webcam(500, 500, true));
+  const [duration, setDuration] = useState(30);
+  const [test, setTest] = useState(0);
+  let ctx, maxPredictions;
+  let cnt = 0;
+  let poseOn = false;
+  const cntRef = useRef(cnt);
+  let cntContainer;
+  let startTime, endTime;
 
-  // // Function to load all the models in advance
-  // async function loadModels(URL, mdl) {
-  //   const modelURL = URL + "model.json";
-  //   const metadataURL = URL + "metadata.json";
-  //   mdl.setModel(await tmPose.load(modelURL, metadataURL));
-  // }
+  const move = () => {
+    let current = workout.pop();
+    setCurrent(current);
+    setNext(workout.next());
+    if (!current) {
+      webcam.pause();
+      webcam.stop();
+      alert("축하합니다. 운동을 완료하셨습니다.");
+      setDone(true);
+    } else {
+      // setTransition(true);
+      // setTimeout(function () {
+      //   setCurrentModel(modelDict[current.name].model);
+      // cntContainer = document.getElementById("count");
+      // cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+      // }, (duration * 100));
+      cntRef.current = 0;
+      cntContainer = document.getElementById("count");
+      cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+      setCurrentModel(modelDict[current.name].model);
+    }
+  };
 
-  // async function init() {
-  //   // Loading Models
-  //   console.log("loading models");
-  //   for (var i = 0; i < workOutPlan.list.length; i++) {
-  //     let temp = modelDict[workOutPlan.list[i].name];
-  //     await loadModels(temp.link, temp);
-  //   }
-  //   console.log("loading completed");
+  useEffect(() => {
+    // Loading Models
+    console.log("loading models");
+    loadModels();
+    setUpCam();
+  }, []);
 
-  //   // Set up webcam
-  //   const flip = true;
-  //   webcam = new tmPose.Webcam(500, 500, flip);
-  //   await webcam.setup();
-  //   webcam.play();
+  useEffect(() => {
+    if (!currentModel) return;
+    if (!webcamLoaded) return;
+    setLoading(false);
+    init();
+  }, [currentModel, webcamLoaded]);
 
-  //   model = modelDict[workOutPlan.list[0].name].model;
-  //   maxPredictions = model.getTotalClasses();
+  // Function to load all the models in advance
+  async function loadModels() {
+    for (var i = 0; i < workout.list.length; i++) {
+      let temp = modelDict[workout.list[i].name];
+      const modelURL = temp.link + "model.json";
+      const metadataURL = temp.link + "metadata.json";
+      modelDict[workout.list[i].name].model = await tmPose.load(
+        modelURL,
+        metadataURL
+      );
+    }
+    console.log("All Models Loaded");
+    setCurrentModel(modelDict[current.name].model);
+  }
 
-  //   window.requestAnimationFrame(loop);
+  const setUpCam = async () => {
+    await webcam.setup();
+    webcam.play();
+    setWebcamLoaded(true);
+  };
 
-  //   const canvas = document.getElementById("canvas");
-  //   canvas.width = 500;
-  //   canvas.height = 500;
-  //   ctx = canvas.getContext("2d");
-  // }
+  async function init() {
+    maxPredictions = currentModel.getTotalClasses();
+    console.log(cntRef.current);
 
-  // async function loop(timestamp) {
-  //   webcam.update();
-  //   await predict();
-  //   window.requestAnimationFrame(loop);
-  // }
+    window.requestAnimationFrame(loop);
 
-  // async function predict() {
-  //   const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-  //   const prediction = await model.predict(posenetOutput);
+    cntContainer = document.getElementById("count");
 
-  //   for (let i = 0; i < maxPredictions; i++) {
-  //     console.log(
-  //       prediction[i].className + ": " + prediction[i].probability.toFixed(2)
-  //     );
-  //   }
-  //   drawPose(pose);
-  // }
+    const canvas = document.getElementById("canvas");
+    canvas.width = 500;
+    canvas.height = 500;
+    ctx = canvas.getContext("2d");
+  }
 
-  // function drawPose(pose) {
-  //   ctx.drawImage(webcam.canvas, 0, 0);
-  //   if (pose) {
-  //     const minPartConfidence = 0.5;
-  //     tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-  //     tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-  //   }
-  // }
+  async function loop(timestamp) {
+    webcam.update();
+    startTime = new Date().getTime();
+    await predict();
+    if (cntRef.current < current.frequency) {
+      window.requestAnimationFrame(loop);
+    } else {
+      move();
+    }
+  }
 
-  // useEffect(() => {
-  //   init();
-  // }, []);
+  async function predict() {
+    const { pose, posenetOutput } = await currentModel.estimatePose(
+      webcam.canvas
+    );
+    const prediction = await currentModel.predict(posenetOutput);
+
+    // Camel Pose
+    if (current.name === "Camel Pose") {
+      // console.log(
+      //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
+      // );
+      // console.log(
+      //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
+      // );
+      if (prediction[0].probability.toFixed(2) > 0.95) {
+        endTime = new Date().getTime();
+        cntRef.current += (endTime - startTime) / 1000;
+      }
+      cntContainer.innerHTML =
+        cntRef.current.toFixed(2) + "/" + current.frequency + "sec";
+    }
+
+    // Tree Pose
+    if (current.name === "Tree Pose") {
+      // console.log(
+      //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
+      // );
+      // console.log(
+      //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
+      // );
+      if (prediction[0].probability.toFixed(2) > 0.95) {
+        endTime = new Date().getTime();
+        cntRef.current += (endTime - startTime) / 1000;
+      }
+      cntContainer.innerHTML =
+        cntRef.current.toFixed(2) + "/" + current.frequency + "sec";
+    }
+
+    // Push Up & Squat
+    if (current.name === "Push Up" || current.name === "Squat") {
+      // console.log(
+      //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
+      // );
+      // console.log(
+      //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
+      // );
+      if (prediction[0].probability.toFixed(2) > 0.95 && poseOn === false) {
+        poseOn = true;
+      } else if (
+        prediction[1].probability.toFixed(2) >= 0.95 &&
+        poseOn === true
+      ) {
+        poseOn = false;
+        cntRef.current += cntRef.current + 1;
+      }
+      cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+    }
+
+    drawPose(pose);
+  }
+
+  function drawPose(pose) {
+    ctx.drawImage(webcam.canvas, 0, 0);
+    if (pose) {
+      const minPartConfidence = 0.5;
+      tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+      tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+    }
+  }
 
   return (
-    <div className="play-container">
-      <canvas id="canvas"></canvas>
-      <div className="process">
-        <h2>NEXT:</h2>
-        <h1>Jumping Jacks</h1>
-        <p> .</p>
-        <p> .</p>
-        <p> .</p>
-        <p> .</p>
-        <h1>Count / 15</h1>
+    <div>
+      {done && <Confetti width={width} height={height} />}
+      {loading && <Loading />}
+      {transition && (
+        <Transition duration={duration} setTransition={setTransition} />
+      )}
+      <div className="play-container">
+        <canvas id="canvas"></canvas>
+        <div>
+          <div className="process">
+            <h2>NEXT:</h2>
+            <h1>{next}</h1>
+            <p> .</p>
+            <p> .</p>
+            <p> .</p>
+            <p> .</p>
+            <h1 id="count"></h1>
+          </div>
+          <button
+            className="skip-button"
+            onClick={() => {
+              cntRef.current = 10000;
+            }}
+          >
+            Skip
+          </button>
+        </div>
       </div>
     </div>
   );

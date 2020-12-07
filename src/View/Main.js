@@ -35,21 +35,24 @@ import standing_oblique_band_image from "../Image/StandingObliqueBand.jpg";
 import workout from "../Components/workout";
 import workoutplan from "../Components/workoutplan";
 
-var yoga = [new workout("Camel Pose", 15, 3), new workout("Tree Pose", 15, 3)];
-var chest = [new workout("Push Up", 15, 3)];
-var shoulder_back = [new workout("Side Lateral Raise", 15, 3)];
-var arms = [new workout("Arm Curl", 15, 3)];
+import { fadeIn, bounce } from "react-animations";
+import { StyleSheet, css } from "aphrodite";
+
+var yoga = [new workout("Camel Pose", 45, 2), new workout("Tree Pose", 45, 2)];
+var chest = [new workout("Push Up", 18, 5)];
+var shoulder_back = [new workout("Side Lateral Raise", 15, 5)];
+var arms = [new workout("Arm Curl", 16, 4)];
 var abs = [
   new workout("Core Stabilizer", 15, 3),
   new workout("Standing Oblique Band", 15, 3),
 ];
 var legs = [
-  new workout("Squat", 15, 3),
-  new workout("Lunge", 15, 3),
-  new workout("Side Lunge", 15, 3),
+  new workout("Squat", 20, 3),
+  new workout("Lunge", 15, 2),
+  new workout("Side Lunge", 10, 2),
 ];
 var aerobics = [
-  new workout("Burpee", 15, 3),
+  new workout("Burpee", 10, 2),
   new workout("Jumping Jacks", 15, 3),
 ];
 
@@ -72,6 +75,17 @@ export const Main = ({ user, handleLogout }) => {
   const [workOutPlan, setWorkOutPlan] = useState(null);
   const [togglePopup, setTogglePopup] = useState(false);
   const [individualName, setIndividualName] = useState(null);
+
+  const styles = StyleSheet.create({
+    fadeIn: {
+      animationName: fadeIn,
+      animationDuration: "1s",
+    },
+    bounce: {
+      animationName: bounce,
+      animationDuration: "infinite",
+    },
+  });
 
   return (
     <section className="hero">
@@ -103,6 +117,7 @@ export const Main = ({ user, handleLogout }) => {
                 setToggleBtn(false);
                 setWorkOutPlan(null);
                 setWorkout(false);
+                window.location.reload(false);
               }}
             >
               <ArrowBackIcon fontSize="large" style={{ color: "white" }} />
@@ -129,15 +144,6 @@ export const Main = ({ user, handleLogout }) => {
                 }}
               >
                 <InitialCard text="개별운동" image={image2} />
-              </div>
-              <div
-                onClick={() => {
-                  setToggleBtn(true);
-                  setInitial(false);
-                  setConstruct(true);
-                }}
-              >
-                <InitialCard text="코스짜기" image={image1} />
               </div>
             </div>
           )}
