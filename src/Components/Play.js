@@ -106,10 +106,13 @@ export const Play = ({ workOutPlan }) => {
     } else {
       setTransition(true);
       setTimeout(function () {
+        if (currentModel === modelDict[current.name].model) {
+          setCurrentModel(null);
+        }
         setCurrentModel(modelDict[current.name].model);
         cntContainer = document.getElementById("count");
         cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
-      }, duration * 100);
+      }, duration * 1000);
       // cntContainer = document.getElementById("count");
       // cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
       // setCurrentModel(modelDict[current.name].model);
@@ -152,8 +155,6 @@ export const Play = ({ workOutPlan }) => {
   };
 
   async function init() {
-    console.log(cntRef.current);
-
     window.requestAnimationFrame(loop);
 
     cntContainer = document.getElementById("count");
@@ -189,12 +190,12 @@ export const Play = ({ workOutPlan }) => {
       // console.log(
       //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
       // );
-      if (prediction[0].probability.toFixed(2) > 0.98) {
+      if (prediction[0].probability.toFixed(1) > 0.98) {
         endTime = new Date().getTime();
         cntRef.current += (endTime - startTime) / 1000;
       }
       cntContainer.innerHTML =
-        cntRef.current.toFixed(2) + "/" + current.frequency + "sec";
+        cntRef.current.toFixed(1) + "/" + current.frequency + "sec";
     }
 
     // Tree Pose
@@ -205,12 +206,12 @@ export const Play = ({ workOutPlan }) => {
       // console.log(
       //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
       // );
-      if (prediction[0].probability.toFixed(2) > 0.98) {
+      if (prediction[0].probability.toFixed(1) > 0.98) {
         endTime = new Date().getTime();
         cntRef.current += (endTime - startTime) / 1000;
       }
       cntContainer.innerHTML =
-        cntRef.current.toFixed(2) + "/" + current.frequency + "sec";
+        cntRef.current.toFixed(1) + "/" + current.frequency + "sec";
     }
 
     // Push Up & Squat & Side Lunge & Squat & Side Lateral Raise & Lunge
@@ -220,7 +221,8 @@ export const Play = ({ workOutPlan }) => {
       current.name === "Side Lunge" ||
       current.name === "Squat" ||
       current.name === "Side Lateral Raise" ||
-      current.name === "Lunge"
+      current.name === "Lunge" ||
+      current.name === "Arm Curl"
     ) {
       // console.log(
       //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)

@@ -1,23 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 export const Transition = ({ duration, setTransition }) => {
-  const [count, setCount] = useState(duration);
+  var count = duration;
+  const cntRef = useRef(count);
+  let cntContainer;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setCount(count - 1);
-    }, 1000);
+    cntContainer = document.getElementById("cnt");
+    const temp = () => {
+      cntRef.current -= 1;
+      cntContainer.innerHTML = cntRef.current;
+      setTimeout(() => {
+        temp();
+      }, 1000);
+      if (cntRef.current === 0) {
+        setTransition(false);
+      }
+    };
+    temp();
   });
-
-  useEffect(() => {
-    if (count === 0) {
-      setTransition(false);
-    }
-  }, [count]);
 
   return (
     <div className="loading">
-      <h1>{count}</h1>
+      <h1 id="cnt"></h1>
     </div>
   );
 };
