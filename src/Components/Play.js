@@ -5,6 +5,8 @@ import { Loading } from "./Loading";
 import { Transition } from "./Transition";
 import * as tmPose from "@teachablemachine/pose";
 import "../App.css";
+import HelpIcon from "@material-ui/icons/Help";
+import IconButton from "@material-ui/core/IconButton";
 
 import mdl from "./mdl";
 import workoutplan from "./workoutplan";
@@ -35,8 +37,11 @@ modelDict["Arm Curl"] = new mdl(
   null
 );
 // 근력 (복근)
-modelDict["Core Stabilizer"] = new mdl("", null);
-modelDict["Standing Oblique Band"] = new mdl(
+modelDict["Core Stabilizer"] = new mdl(
+  "https://teachablemachine.withgoogle.com/models/bzH7x9CDk/",
+  null
+);
+modelDict["Standing Oblique Bend"] = new mdl(
   "https://teachablemachine.withgoogle.com/models/x8jXb3Rj-/",
   null
 );
@@ -76,16 +81,21 @@ export const Play = ({ workOutPlan }) => {
   const [transition, setTransition] = useState(false);
   const [webcam, setWebcam] = useState(new tmPose.Webcam(500, 500, true));
   const [duration, setDuration] = useState(30);
-  const [test, setTest] = useState(0);
-  let ctx, maxPredictions;
+  let ctx;
   let cnt = 0;
   let poseOn = false;
   const cntRef = useRef(cnt);
   let cntContainer;
   let startTime, endTime;
+  let curPose;
+
+  const newTab = () => {
+    window.open("https://stayhomegetfit.quv.kr/4", "_blank");
+  };
 
   const move = () => {
     let current = workout.pop();
+    cntRef.current = 0;
     setCurrent(current);
     setNext(workout.next());
     if (!current) {
@@ -94,16 +104,15 @@ export const Play = ({ workOutPlan }) => {
       alert("축하합니다. 운동을 완료하셨습니다.");
       setDone(true);
     } else {
-      // setTransition(true);
-      // setTimeout(function () {
-      //   setCurrentModel(modelDict[current.name].model);
+      setTransition(true);
+      setTimeout(function () {
+        setCurrentModel(modelDict[current.name].model);
+        cntContainer = document.getElementById("count");
+        cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+      }, duration * 100);
       // cntContainer = document.getElementById("count");
       // cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
-      // }, (duration * 100));
-      cntRef.current = 0;
-      cntContainer = document.getElementById("count");
-      cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
-      setCurrentModel(modelDict[current.name].model);
+      // setCurrentModel(modelDict[current.name].model);
     }
   };
 
@@ -143,7 +152,6 @@ export const Play = ({ workOutPlan }) => {
   };
 
   async function init() {
-    maxPredictions = currentModel.getTotalClasses();
     console.log(cntRef.current);
 
     window.requestAnimationFrame(loop);
@@ -181,7 +189,7 @@ export const Play = ({ workOutPlan }) => {
       // console.log(
       //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
       // );
-      if (prediction[0].probability.toFixed(2) > 0.95) {
+      if (prediction[0].probability.toFixed(2) > 0.98) {
         endTime = new Date().getTime();
         cntRef.current += (endTime - startTime) / 1000;
       }
@@ -197,7 +205,7 @@ export const Play = ({ workOutPlan }) => {
       // console.log(
       //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
       // );
-      if (prediction[0].probability.toFixed(2) > 0.95) {
+      if (prediction[0].probability.toFixed(2) > 0.98) {
         endTime = new Date().getTime();
         cntRef.current += (endTime - startTime) / 1000;
       }
@@ -205,22 +213,72 @@ export const Play = ({ workOutPlan }) => {
         cntRef.current.toFixed(2) + "/" + current.frequency + "sec";
     }
 
-    // Push Up & Squat
-    if (current.name === "Push Up" || current.name === "Squat") {
+    // Push Up & Squat & Side Lunge & Squat & Side Lateral Raise & Lunge
+    if (
+      current.name === "Push Up" ||
+      current.name === "Squat" ||
+      current.name === "Side Lunge" ||
+      current.name === "Squat" ||
+      current.name === "Side Lateral Raise" ||
+      current.name === "Lunge"
+    ) {
       // console.log(
       //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
       // );
       // console.log(
       //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
       // );
-      if (prediction[0].probability.toFixed(2) > 0.95 && poseOn === false) {
+      if (prediction[0].probability.toFixed(2) > 0.9 && poseOn === false) {
         poseOn = true;
       } else if (
-        prediction[1].probability.toFixed(2) >= 0.95 &&
+        prediction[1].probability.toFixed(2) >= 0.9 &&
         poseOn === true
       ) {
         poseOn = false;
-        cntRef.current += cntRef.current + 1;
+        cntRef.current += 1;
+      }
+      cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+    }
+
+    // Standing Oblique Bend & Jumping Jacks & Core Stabilizer
+    if (
+      current.name === "Standing Oblique Bend" ||
+      current.name === "Jumping Jacks" ||
+      current.name === "Core Stabilizer"
+    ) {
+      // console.log(
+      //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
+      // );
+      // console.log(
+      //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
+      // );
+      if (prediction[0].probability.toFixed(2) > 0.9 && poseOn === false) {
+        poseOn = true;
+      } else if (
+        prediction[1].probability.toFixed(2) >= 0.9 &&
+        poseOn === true
+      ) {
+        poseOn = false;
+        cntRef.current += 1;
+      }
+      cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
+    }
+
+    // Burpee
+    if (current.name === "Burpee") {
+      // console.log(
+      //   prediction[0].className + " : " + prediction[0].probability.toFixed(2)
+      // );
+      // console.log(
+      //   prediction[1].className + " : " + prediction[1].probability.toFixed(2)
+      // );
+      if (prediction[1].probability.toFixed(2) > 0.9 && curPose === 2) {
+        curPose = 1;
+      } else if (prediction[0].probability.toFixed(2) > 0.9 && curPose === 1) {
+        curPose = 0;
+      } else if (prediction[2].probability.toFixed(2) > 0.9 && curPose === 0) {
+        curPose = 2;
+        cntRef.current += 1;
       }
       cntContainer.innerHTML = cntRef.current + "/" + current.frequency;
     }
@@ -266,6 +324,9 @@ export const Play = ({ workOutPlan }) => {
           </button>
         </div>
       </div>
+      <IconButton onClick={() => newTab()} style={{ marginLeft: "10%" }}>
+        <HelpIcon style={{ color: "white" }} />
+      </IconButton>
     </div>
   );
 };

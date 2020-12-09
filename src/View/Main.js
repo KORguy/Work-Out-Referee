@@ -44,7 +44,7 @@ var shoulder_back = [new workout("Side Lateral Raise", 15, 5)];
 var arms = [new workout("Arm Curl", 16, 4)];
 var abs = [
   new workout("Core Stabilizer", 15, 3),
-  new workout("Standing Oblique Band", 15, 3),
+  new workout("Standing Oblique Bend", 15, 3),
 ];
 var legs = [
   new workout("Squat", 20, 3),
@@ -53,7 +53,7 @@ var legs = [
 ];
 var aerobics = [
   new workout("Burpee", 10, 2),
-  new workout("Jumping Jacks", 15, 3),
+  new workout("Jumping Jack", 15, 3),
 ];
 
 // 운동계획 이름 + 운동들 리스트 자료형
@@ -299,12 +299,12 @@ export const Main = ({ user, handleLogout }) => {
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Standing Oblique Band");
+                      setIndividualName("Standing Oblique Bend");
                       setTogglePopup(true);
                     }}
                   >
                     <Individual
-                      name="Standing Oblique Band"
+                      name="Standing Oblique Bend"
                       image={standing_oblique_band_image}
                     />{" "}
                   </div>
@@ -352,12 +352,12 @@ export const Main = ({ user, handleLogout }) => {
                   </div>
                   <div
                     onClick={() => {
-                      setIndividualName("Jumping Jacks");
+                      setIndividualName("Jumping Jack");
                       setTogglePopup(true);
                     }}
                   >
                     <Individual
-                      name="Jumping Jacks"
+                      name="Jumping Jack"
                       image={jumping_jacks_image}
                     />{" "}
                   </div>
